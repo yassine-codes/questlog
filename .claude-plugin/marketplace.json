@@ -1,0 +1,17 @@
+{
+  "name": "questlog",
+  "owner": {
+    "name": "yassine-codes",
+    "url": "https://github.com/yassine-codes"
+  },
+  "metadata": {
+    "description": "Questlog — the living-roadmap plugin for Claude Code."
+  },
+  "plugins": [
+    {
+      "name": "questlog",
+      "source": "./",
+      "description": "A shared, living roadmap you and your Claude Code agents co-manage — MCP tools, session hooks, skills and a local dashboard. Zero dependencies."
+    }
+  ]
+}

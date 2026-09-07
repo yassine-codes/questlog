@@ -1,0 +1,47 @@
+{
+  "schemaVersion": 1,
+  "_comment": "Structural shape of Claude Code's own session transcripts that sidecar-adapter.mjs was written against. checkFingerprint() compares every read against this. On drift the dock splints to its native transcript and (per config sidecar.repair) ONE Fable session is launched whose permission scope allows editing nothing but sidecar-adapter.mjs, sidecar-adapter.selftest.mjs and this file.",
+  "requiredLineFields": [
+    "type",
+    "uuid",
+    "parentUuid",
+    "timestamp"
+  ],
+  "_requiredLineFieldsNote": "Checked ONLY on messageLineTypes. Bookkeeping lines (queue-operation, last-prompt, custom-title, mode, permission-mode...) legitimately carry none of these; demanding them of every line would flag today's own real transcripts as drift.",
+  "messageLineTypes": [
+    "user",
+    "assistant"
+  ],
+  "knownLineTypes": [
+    "user",
+    "assistant",
+    "system",
+    "attachment",
+    "queue-operation",
+    "last-prompt",
+    "custom-title",
+    "ai-title",
+    "mode",
+    "permission-mode",
+    "file-history-snapshot",
+    "file-history-delta",
+    "frame-link",
+    "bridge-session",
+    "relocated",
+    "summary",
+    "atis-latch"
+  ],
+  "knownBlockTypes": [
+    "text",
+    "tool_use",
+    "tool_result",
+    "thinking",
+    "image",
+    "fallback"
+  ],
+  "_knownBlockTypesNote": "text/tool_use/tool_result/thinking are the four the parser maps (thinking is dropped in wave 1). image and fallback are observed in real current transcripts and are tolerated without drift; they simply do not become beats.",
+  "versionSeen": "2.1.263",
+  "_versionNote": "Only a MAJOR.MINOR move counts as drift. Patch releases churn constantly and have never moved the shape. Observed across the corpus: 2.1.209 through 2.1.263.",
+  "observedAt": "2026-09-07",
+  "observedFrom": "the Claude Code transcripts of the checkout this file ships in, under ~/.claude/projects/<slug of the checkout>"
+}

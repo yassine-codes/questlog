@@ -1,0 +1,62 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://questlog.dev/schema/registry.schema.json",
+  "title": "questlog registry.json",
+  "description": "USER-LEVEL roadmap registry that lets the central dashboard discover every roadmap on this machine. Lives at ~/.questlog/registry.json by default, overridable with the QUESTLOG_REGISTRY environment variable. This is a single user-global file, NOT part of any project's .questlog/ directory, so validate.mjs (which validates one project dir) does not check it. Reads are tolerant everywhere: a missing or corrupt file is treated as { schemaVersion: 1, roadmaps: [] }. Dead entries (a dir that no longer exists) are kept and reported missing, never removed automatically. An entry MAY carry an optional origin edge naming the parent roadmap + portal milestone it branched from (absent OR null = a root); origin is operator data (not jargon-linted, carries no plain field). Frozen against Build Plan Section 1.1.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schemaVersion", "roadmaps"],
+  "$defs": {
+    "timestamp": {
+      "type": "string",
+      "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}\\.[0-9]{3}Z$"
+    }
+  },
+  "properties": {
+    "schemaVersion": { "const": 1 },
+    "roadmaps": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["id", "name", "dir", "addedAt", "lastSeenAt"],
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^rm-[a-z0-9][a-z0-9-]*$",
+            "description": "REQUIRED. Stable registry id, prefix \"rm-\". Derived once from the directory basename slug (or random hex); NEVER regenerated for an existing dir."
+          },
+          "name": { "type": "string", "minLength": 1, "description": "REQUIRED non-empty display name. Refreshed on every upsert from the project's roadmap.json project.name, falling back to the directory basename." },
+          "dir": { "type": "string", "minLength": 1, "description": "REQUIRED. Absolute, path.resolve()d project root — the folder that CONTAINS .questlog/, not the .questlog subdir itself." },
+          "addedAt": { "$ref": "#/$defs/timestamp", "description": "REQUIRED. Set once at first registration; never changed afterward." },
+          "lastSeenAt": { "$ref": "#/$defs/timestamp", "description": "REQUIRED. Bumped on every upsert (auto-register at dir-mode startup, a roadmap_register call, or a roadmap_set_origin call)." },
+          "origin": {
+            "type": ["object", "null"],
+            "additionalProperties": false,
+            "required": ["roadmapId", "milestoneId", "ts"],
+            "description": "OPTIONAL. Absent OR null = a ROOT roadmap. Present = the family-tree edge to the PARENT this road branched from (promotion births a child, never an orphan; the edge is permanent data). Registry-only, operator text — never jargon-linted, no plain field. Set/changed by roadmap_register (both-or-neither origin args) or roadmap_set_origin. Cycles and self-edges are rejected at write time; a parent id not in the registry is a tolerated orphan (greyed edge, never a crash).",
+            "properties": {
+              "roadmapId": {
+                "type": "string",
+                "pattern": "^rm-[a-z0-9][a-z0-9-]*$",
+                "description": "REQUIRED. Registry id of the parent roadmap (prefix \"rm-\"). Must NOT equal this entry's own id (self-edge) and must not close a cycle up the parent chain."
+              },
+              "milestoneId": {
+                "type": "string",
+                "pattern": "^ms-[a-z0-9][a-z0-9-]*$",
+                "description": "REQUIRED. Id of the portal milestone IN THE PARENT road (any quest — a promoted side quest's milestones live on that side quest). Milestone existence in the parent is NOT enforced at write time; the serve-time overlay degrades gracefully (milestoneMissing) if it was renamed or deleted."
+              },
+              "ts": { "$ref": "#/$defs/timestamp", "description": "REQUIRED. When the edge was recorded. Always set by the server (never caller-supplied)." },
+              "sessionId": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 200,
+                "description": "OPTIONAL. AI session that recorded the edge (free-form, <=200 chars, no control chars). Omitted when none resolves."
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

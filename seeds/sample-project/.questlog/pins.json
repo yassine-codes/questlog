@@ -1,0 +1,14 @@
+{
+  "schemaVersion": 1,
+  "pins": [
+    {
+      "id": "pin-compaction-1",
+      "ts": "2026-07-12T08:30:00.000Z",
+      "kind": "compaction",
+      "label": "Compaction #1",
+      "afterMilestoneId": "ms-setup",
+      "summary": "First thread covered project scaffolding through the SQLite storage decision. Synthesized before starting the MVP.",
+      "synthesisDocPath": "docs/compaction-1-synthesis.md"
+    }
+  ]
+}

@@ -1,0 +1,34 @@
+# --- Runtime state (Questlog's own dogfooded road) ---
+# The engine is the repo; roads are data. Anchored to the root on purpose: the
+# engine ignores its OWN road and nothing else, so the demo seed under seeds/
+# ships with the repo instead of vanishing from every clone.
+/.questlog/
+
+# --- Sync bot / local agent state ---
+.claude/
+
+# --- Build output ---
+dist-desktop/
+*.exe
+*.exe.inuse-*
+
+# --- Test scratch & harness artifacts ---
+_drill005b/
+_drillc/
+_verify/
+output/
+.playwright-cli/
+distillery-drafts/
+probe.err
+*.log
+
+# --- Node / OS ---
+node_modules/
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# --- Secrets ---
+.env
+.env.*
+*.pem

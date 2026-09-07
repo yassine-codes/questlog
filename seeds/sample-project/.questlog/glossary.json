@@ -1,0 +1,51 @@
+{
+  "schemaVersion": 1,
+  "terms": [
+    {
+      "id": "term-mvp",
+      "term": "MVP",
+      "plain": "The smallest version of a product that is still worth putting in front of real users.",
+      "note": "Short for minimum viable product.",
+      "link": null
+    },
+    {
+      "id": "term-dns",
+      "term": "DNS",
+      "plain": "The internet's address book that turns a web-address name into the numbered location of the server.",
+      "note": "",
+      "link": null
+    },
+    {
+      "id": "term-db",
+      "term": "DB",
+      "plain": "Short for database: the organized store where an app keeps its information.",
+      "note": "",
+      "link": null
+    },
+    {
+      "id": "term-sqlite",
+      "term": "SQLite",
+      "plain": "A lightweight database that lives in a single file, with no separate server to run.",
+      "note": "",
+      "link": null
+    },
+    {
+      "id": "term-built-by",
+      "term": "built by",
+      "aliases": [],
+      "plain": "The record of which AI work sessions actually touched this milestone, and the code commits they left behind.",
+      "note": "Read-only history. It is assembled from the activity log and, when a code folder is linked, real git commits.",
+      "link": null
+    },
+    {
+      "id": "term-commit",
+      "term": "commit",
+      "aliases": [
+        "commits"
+      ],
+      "plain": "One saved change to the code, stamped with who made it and when.",
+      "note": "Each commit here is tied back to the AI session that wrote it via a trailer line in the commit message.",
+      "link": null
+    }
+  ]
+}

@@ -1,0 +1,55 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://questlog.dev/schema/suggestions.schema.json",
+  "title": "questlog suggestions.json",
+  "description": "OPTIONAL per-roadmap set of HORIZON SUGGESTIONS — possible next milestones an agent floats past an ANCHOR milestone. Each suggestion is TAGGED with the anchor milestone id it was made at (the field is still called frontierMilestoneId for back-compat). HORIZON TREES (dec-horizon-tree): a suggestion MAY carry branchIndex (which of up to 5 genuinely different PARALLEL directions it belongs to) and seqIndex (its position, 0-2, along that direction — a SEQUENTIAL consequence of the one before it). Records WITHOUT branchIndex are LEGACY: they render exactly as the original single chain past a road-end and keep the original staleness rule (stale once the anchor is no longer a road-end). Records WITH branchIndex render as a fan of parallel rays beside the anchor and go stale only when the anchor milestone is deleted. Any done or in-progress milestone may be an anchor. Rendered as faint GHOST nodes, never counted in any progress tally. Lives at <projectRoot>/.questlog/suggestions.json alongside roadmap.json. Absent file = no suggestions yet (normal, fully back-compatible). Present file is validated strictly. schemaVersion stays 1. Kept a SEPARATE file so roadmap.json's strict schema is untouched — suggestions are possibilities, not work.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schemaVersion", "suggestions"],
+  "$defs": {
+    "timestamp": {
+      "type": "string",
+      "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}\\.[0-9]{3}Z$"
+    }
+  },
+  "properties": {
+    "schemaVersion": { "const": 1 },
+    "suggestions": {
+      "type": "array",
+      "description": "At most 15 suggestions per anchor (frontierMilestoneId): up to 5 parallel directions x up to 3 positions along each. A LEGACY group (no branchIndex anywhere in it) is still capped at 3.",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["id", "frontierMilestoneId", "questId", "title", "plain", "order", "createdAt", "updatedAt"],
+        "properties": {
+          "id": { "type": "string", "pattern": "^sg-[0-9a-f]{8}$", "description": "REQUIRED. \"sg-\" + 8 hex chars." },
+          "frontierMilestoneId": { "type": "string", "pattern": "^ms-[a-z0-9][a-z0-9-]*$", "description": "REQUIRED. The ANCHOR milestone this suggestion was made at (the TAG; name kept for back-compat). LEGACY records (no branchIndex): must be a road-end, and the record is stale once this milestone is no longer the road-end of its quest. GROUPED records (branchIndex present): any done / in-progress milestone (or a road-end), stale only when the anchor milestone is deleted. A fan tagged to a PORTAL milestone re-anchors AT RENDER TIME to the last real (non-portal) milestone of that quest — the data on disk is never rewritten." },
+          "questId": { "type": "string", "pattern": "^q-[a-z0-9][a-z0-9-]*$", "description": "REQUIRED. The quest the frontier milestone belongs to — the chain this possibility would extend if promoted." },
+          "title": { "type": "string", "minLength": 1, "description": "REQUIRED non-empty short title of the possible milestone." },
+          "plain": { "type": "string", "minLength": 1, "description": "REQUIRED non-empty plain-language meaning (founder-facing; jargon-linted)." },
+          "summary": { "type": "string", "description": "OPTIONAL longer description." },
+          "order": { "type": "integer", "minimum": 0, "description": "REQUIRED chain position among this anchor's suggestions. Ascending = a sequential chain; EQUAL order = parallel alternatives. Kept for back-compat and as the deterministic tie-break; branchIndex + seqIndex are authoritative when present." },
+          "branchIndex": { "type": "integer", "minimum": 0, "maximum": 4, "description": "OPTIONAL (horizon trees). Which of up to 5 genuinely different PARALLEL directions this possibility belongs to. ABSENT = a legacy record: renders as the original single chain. Present on every new write." },
+          "seqIndex": { "type": "integer", "minimum": 0, "maximum": 2, "description": "OPTIONAL (horizon trees). Position ALONG its parallel direction: 0 = the parallel root (an alternative), 1-2 = sequential consequences trailing after it. Present on every new write; requires branchIndex." },
+          "createdAt": { "$ref": "#/$defs/timestamp", "description": "REQUIRED. When the suggestion was first made." },
+          "updatedAt": { "$ref": "#/$defs/timestamp", "description": "REQUIRED. Last change." }
+        }
+      }
+    },
+    "requests": {
+      "type": "array",
+      "description": "OPTIONAL (dec-horizon-tree, request-more). Pending founder requests for a fresh horizon generation at an anchor. Written by POST /api/request-suggestions, CLEARED when a suggestions_upsert lands at that anchor. Additive and fully back-compatible: absent = no pending request. Never a tally, never work.",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["id", "milestoneId", "requestedAt"],
+        "properties": {
+          "id": { "type": "string", "pattern": "^rq-[0-9a-f]{8}$", "description": "REQUIRED. \"rq-\" + 8 hex chars." },
+          "milestoneId": { "type": "string", "pattern": "^ms-[a-z0-9][a-z0-9-]*$", "description": "REQUIRED. The anchor milestone a fresh horizon was commissioned at." },
+          "requestedAt": { "$ref": "#/$defs/timestamp", "description": "REQUIRED. When the founder asked." },
+          "sessionId": { "type": "string", "minLength": 1, "maxLength": 200, "description": "OPTIONAL AI session id the request was attributed to." }
+        }
+      }
+    }
+  }
+}

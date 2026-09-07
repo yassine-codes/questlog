@@ -1,0 +1,13 @@
+{
+  "name": "questlog",
+  "version": "1.0.0",
+  "description": "A shared, living roadmap you and your Claude Code agents co-manage — MCP tools, session hooks, skills and a local dashboard. Zero dependencies.",
+  "author": {
+    "name": "yassine-codes",
+    "url": "https://github.com/yassine-codes"
+  },
+  "homepage": "https://github.com/yassine-codes/questlog",
+  "repository": "https://github.com/yassine-codes/questlog",
+  "license": "MIT",
+  "keywords": ["roadmap", "project-memory", "local-first", "mcp", "hooks"]
+}

@@ -1,0 +1,33 @@
+{
+  "schemaVersion": 1,
+  "decisions": [
+    {
+      "id": "dec-use-sqlite",
+      "ts": "2026-07-11T10:00:00.000Z",
+      "title": "Use SQLite for v1 storage",
+      "rationale": "Zero-ops, single file, easy to back up. We do not need concurrency or scale yet.",
+      "impact": "ms-mvp signup storage targets a local SQLite file; a hosted DB is deferred until after launch.",
+      "relatedMilestoneIds": ["ms-mvp"],
+      "proposedBy": "agent",
+      "approved": true,
+      "approvedAt": "2026-07-11T14:00:00.000Z",
+      "status": "approved",
+      "supersededBy": null,
+      "plain": "We agreed to store data in a single-file database for the first version, since we do not need scale yet."
+    },
+    {
+      "id": "dec-defer-auth",
+      "ts": "2026-07-15T11:15:00.000Z",
+      "title": "Defer user accounts / auth until after launch",
+      "rationale": "The MVP only collects emails. Building auth now would delay launch for a feature no early user needs.",
+      "impact": "ms-mvp scope drops login/signup accounts; ms-feedback may re-open this once we see demand.",
+      "relatedMilestoneIds": ["ms-mvp", "ms-feedback"],
+      "proposedBy": "agent",
+      "approved": false,
+      "approvedAt": null,
+      "status": "proposed",
+      "supersededBy": null,
+      "plain": "I am proposing we leave user accounts and login until after launch, since the first version only collects emails. Awaiting your approval."
+    }
+  ]
+}

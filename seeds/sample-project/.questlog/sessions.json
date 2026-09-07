@@ -1,0 +1,21 @@
+{
+  "schemaVersion": 1,
+  "sessions": [
+    {
+      "id": "sess-demo-0001",
+      "firstSeenAt": "2026-07-11T15:30:00.000Z",
+      "lastSeenAt": "2026-07-12T09:00:00.000Z",
+      "label": "first build session",
+      "eventCount": 3
+    },
+    {
+      "id": "sess-demo-0002",
+      "firstSeenAt": "2026-07-14T10:00:00.000Z",
+      "lastSeenAt": "2026-07-18T10:05:00.000Z",
+      "label": "polish session",
+      "eventCount": 6,
+      "lastPulse": "2026-07-18T10:06:00.000Z",
+      "focus": "Edit signup-form.js"
+    }
+  ]
+}

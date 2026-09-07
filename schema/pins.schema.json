@@ -1,0 +1,57 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://questlog.dev/schema/pins.schema.json",
+  "title": "questlog pins.json",
+  "description": "Compaction pins. Markers on the road where a thread was compacted. Frozen against Build Plan Section 1.4.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schemaVersion", "pins"],
+  "$defs": {
+    "timestamp": {
+      "type": "string",
+      "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}\\.[0-9]{3}Z$"
+    }
+  },
+  "properties": {
+    "schemaVersion": { "const": 1 },
+    "pins": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["id", "ts", "kind", "label", "afterMilestoneId", "summary", "synthesisDocPath"],
+        "properties": {
+          "id": { "type": "string", "pattern": "^pin-[a-z0-9][a-z0-9-]*$" },
+          "ts": { "$ref": "#/$defs/timestamp" },
+          "kind": { "type": "string", "enum": ["compaction", "save_point"], "description": "\"compaction\" = a manual/synthesized compaction pin; \"save_point\" = an automatic marker dropped by the PreCompact hook just before compaction (synthesis usually still pending)." },
+          "label": { "type": "string", "minLength": 1 },
+          "afterMilestoneId": {
+            "oneOf": [
+              { "type": "string", "pattern": "^ms-[a-z0-9][a-z0-9-]*$" },
+              { "type": "null" }
+            ],
+            "description": "Road position: marker sits on the segment after this main-quest milestone; null = start of road."
+          },
+          "summary": { "type": "string" },
+          "synthesisDocPath": {
+            "oneOf": [
+              { "type": "string", "minLength": 1 },
+              { "type": "null" }
+            ]
+          },
+          "sessionId": {
+            "oneOf": [
+              { "type": "string", "minLength": 1, "maxLength": 200 },
+              { "type": "null" }
+            ],
+            "description": "OPTIONAL. The AI session that dropped this pin (typical on hook-created save_points). Absent/null on hand-made pins."
+          },
+          "synthesisPending": {
+            "type": "boolean",
+            "description": "OPTIONAL. true = a synthesis doc is still owed for this pin (set by the PreCompact save_point hook). Absent/false = nothing pending."
+          }
+        }
+      }
+    }
+  }
+}

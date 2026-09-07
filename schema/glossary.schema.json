@@ -1,0 +1,45 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://questlog.dev/schema/glossary.schema.json",
+  "title": "questlog glossary.json",
+  "description": "OPTIONAL per-project jargon glossary. Each term carries a one-sentence plain meaning the UI shows on hover/tap wherever the term appears. Absent file = no underlines; lint prints a warning and passes. Frozen against Build Plan Section 1.1.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schemaVersion", "terms"],
+  "$defs": {
+    "id": {
+      "type": "string",
+      "pattern": "^[a-z]+-[a-z0-9][a-z0-9-]*$",
+      "description": "Lowercase id, prefix by type. Unique within its file."
+    }
+  },
+  "properties": {
+    "schemaVersion": { "const": 1 },
+    "terms": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["id", "term", "plain"],
+        "properties": {
+          "id": { "$ref": "#/$defs/id", "pattern": "^term-[a-z0-9][a-z0-9-]*$", "description": "REQUIRED. Prefix \"term-\", unique within this file." },
+          "term": { "type": "string", "minLength": 1, "description": "REQUIRED non-empty. Canonical surface form as it appears in text (e.g. \"CF Access\")." },
+          "aliases": {
+            "type": "array",
+            "items": { "type": "string", "minLength": 1 },
+            "description": "OPTIONAL, default []. Additional surface forms. Array of non-empty strings."
+          },
+          "plain": { "type": "string", "minLength": 1, "description": "REQUIRED non-empty. ONE plain sentence, human register, no other undefined jargon (dogfood: this field is itself jargon-lint-scanned)." },
+          "note": { "type": "string", "description": "OPTIONAL string, default \"\". Longer context, shown in the expanded tooltip. Also jargon-lint-scanned." },
+          "link": {
+            "oneOf": [
+              { "type": "string", "minLength": 1 },
+              { "type": "null" }
+            ],
+            "description": "OPTIONAL string|null, default null. URL or repo-relative doc path."
+          }
+        }
+      }
+    }
+  }
+}

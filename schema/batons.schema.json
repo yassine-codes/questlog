@@ -1,0 +1,62 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://questlog.dev/schema/batons.schema.json",
+  "title": "questlog batons.json",
+  "description": "OPTIONAL per-roadmap handoff record. A baton is a compact briefing one AI session banks for the next (done / in-flight / next / warnings), so a thread survives a session boundary or a compaction. Lives at <projectRoot>/.questlog/batons.json alongside roadmap.json. Absent file = no batons yet (normal). Present file is validated strictly. schemaVersion stays 1 (back-compatible: old dirs load fine). Kept a SEPARATE file so roadmap.json's strict schema is untouched.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schemaVersion", "batons"],
+  "$defs": {
+    "timestamp": {
+      "type": "string",
+      "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}\\.[0-9]{3}Z$"
+    },
+    "sessionId": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 200,
+      "pattern": "^[^\\u0000-\\u001f\\u007f]+$"
+    },
+    "stringList": {
+      "type": "array",
+      "items": { "type": "string" }
+    }
+  },
+  "properties": {
+    "schemaVersion": { "const": 1 },
+    "batons": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["id", "ts", "fromSessionId", "toSessionId", "label", "done", "inFlight", "next", "warnings", "docPath", "status"],
+        "properties": {
+          "id": { "type": "string", "pattern": "^baton-[0-9a-f]{8}$", "description": "REQUIRED. \"baton-\" + 8 hex chars." },
+          "ts": { "$ref": "#/$defs/timestamp", "description": "REQUIRED. When the baton was banked." },
+          "kind": { "type": "string", "enum": ["handoff", "brief"], "description": "OPTIONAL (absent === \"handoff\", so every baton written before kinds existed still validates). \"handoff\" joins the session-to-session chain that baton_read/baton_peek walk. \"brief\" is a FEATURE BRIEF addressed to one session via toSessionId: it is deliberately EXCLUDED from that chain, so an addressed brief never shadows the real handoff baton nor flips its author to derived-superseded." },
+          "fromSessionId": { "$ref": "#/$defs/sessionId", "description": "REQUIRED. The session that banked this baton (free-form session id, NOT the lowercase entity-id regex)." },
+          "toSessionId": {
+            "oneOf": [
+              { "$ref": "#/$defs/sessionId" },
+              { "type": "null" }
+            ],
+            "description": "REQUIRED. For a handoff: the session that picked it up (set by baton_read pickUp:true), or null while open. For a brief: the session the brief is ADDRESSED to, set at creation."
+          },
+          "label": { "type": "string", "minLength": 1, "description": "REQUIRED non-empty one-line handoff name." },
+          "done": { "$ref": "#/$defs/stringList", "description": "REQUIRED array of strings — what got finished." },
+          "inFlight": { "$ref": "#/$defs/stringList", "description": "REQUIRED array of strings — half-done work." },
+          "next": { "$ref": "#/$defs/stringList", "description": "REQUIRED array of strings — concrete next steps." },
+          "warnings": { "$ref": "#/$defs/stringList", "description": "REQUIRED array of strings — gotchas for the next session." },
+          "docPath": {
+            "oneOf": [
+              { "type": "string", "minLength": 1 },
+              { "type": "null" }
+            ],
+            "description": "REQUIRED. Path to a longer write-up, or null."
+          },
+          "status": { "type": "string", "enum": ["open", "picked_up"], "description": "REQUIRED. \"open\" = waiting to be picked up (banked work); \"picked_up\" = a later session claimed it (the banking session is then derived-superseded)." }
+        }
+      }
+    }
+  }
+}

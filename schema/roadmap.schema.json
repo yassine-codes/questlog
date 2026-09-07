@@ -1,0 +1,237 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://questlog.dev/schema/roadmap.schema.json",
+  "title": "questlog roadmap.json",
+  "description": "Project meta + quests + milestones + items + assets. Source of truth for a project's roadmap. Frozen against Build Plan Section 1.2.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schemaVersion", "project", "quests", "milestones", "items", "assets"],
+  "$defs": {
+    "id": {
+      "type": "string",
+      "pattern": "^[a-z]+-[a-z0-9][a-z0-9-]*$",
+      "description": "Lowercase id, prefix by type. Unique within its file."
+    },
+    "timestamp": {
+      "type": "string",
+      "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}\\.[0-9]{3}Z$",
+      "description": "ISO-8601 UTC with milliseconds, e.g. 2026-07-18T14:03:22.000Z"
+    },
+    "nullableTimestamp": {
+      "oneOf": [
+        { "$ref": "#/$defs/timestamp" },
+        { "type": "null" }
+      ]
+    },
+    "status": {
+      "type": "string",
+      "enum": ["locked", "available", "in_progress", "done", "blocked"]
+    },
+    "itemStatus": {
+      "type": "string",
+      "enum": ["open", "done", "blocked"]
+    },
+    "dispatchId": {
+      "type": "string",
+      "pattern": "^disp-[a-z0-9][a-z0-9-]*$",
+      "description": "Batch-dispatch id (disp-…). Ties a consumed founder note / unclear flag to the one 'Send to agent' press that dispatched it."
+    },
+    "evidenceEntry": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["ts", "source", "kind", "ref", "claim"],
+      "description": "ONE observation that something was CLAIMED about this milestone — by whom, when, about which run. It never asserts the claim is TRUE. Append-only; the idempotency key is (source, ref, kind), so a watcher restart re-observing the same journal writes nothing.",
+      "properties": {
+        "ts": { "$ref": "#/$defs/timestamp" },
+        "source": {
+          "type": "string",
+          "enum": ["bridge", "sidecar", "raid-watcher", "session", "hook"],
+          "description": "Which observer wrote this. Automation may write evidence; automation may NEVER write status."
+        },
+        "kind": {
+          "type": "string",
+          "enum": ["launch", "finish", "verdict", "abandon", "retract"],
+          "description": "launch = a run began. finish = a run claimed completion. verdict = a ship/no-ship call (carries ship). abandon = the run was dropped. retract = a tombstone over one earlier entry by the SAME source (never a deletion)."
+        },
+        "ref": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 200,
+          "description": "The run identity: a workflow id (wf_…), a dispatchId, or a sidecar log stamp."
+        },
+        "claim": {
+          "type": "string",
+          "maxLength": 500,
+          "description": "What the writer asserts, verbatim, never interpreted. <= 500 chars."
+        },
+        "ship": {
+          "type": "boolean",
+          "description": "REQUIRED when kind is verdict, FORBIDDEN otherwise. true = this run's verdict was ship; false = no-ship (refutes any earlier finish at or before this ts)."
+        },
+        "sessionId": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 200,
+          "description": "OPTIONAL session that produced the observation."
+        },
+        "tombstonesRef": {
+          "type": "string",
+          "description": "REQUIRED when kind is retract, FORBIDDEN otherwise. The key of the entry being tombstoned, as \"<source>|<ref>|<kind>\"."
+        }
+      },
+      "allOf": [
+        {
+          "if": { "properties": { "kind": { "const": "verdict" } }, "required": ["kind"] },
+          "then": { "required": ["ship"] },
+          "else": { "not": { "required": ["ship"] } }
+        },
+        {
+          "if": { "properties": { "kind": { "const": "retract" } }, "required": ["kind"] },
+          "then": { "required": ["tombstonesRef"] },
+          "else": { "not": { "required": ["tombstonesRef"] } }
+        }
+      ]
+    }
+  },
+  "properties": {
+    "schemaVersion": { "const": 1 },
+    "project": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["name", "tagline", "createdAt", "updatedAt"],
+      "properties": {
+        "name": { "type": "string", "minLength": 1 },
+        "tagline": { "type": "string" },
+        "createdAt": { "$ref": "#/$defs/timestamp" },
+        "updatedAt": { "$ref": "#/$defs/timestamp" }
+      }
+    },
+    "quests": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["id", "type", "title", "parentMilestoneId", "side", "order", "status", "createdAt", "updatedAt"],
+        "properties": {
+          "id": { "$ref": "#/$defs/id", "pattern": "^q-[a-z0-9][a-z0-9-]*$" },
+          "type": { "type": "string", "enum": ["main", "side"] },
+          "title": { "type": "string", "minLength": 1 },
+          "parentMilestoneId": {
+            "oneOf": [
+              { "$ref": "#/$defs/id", "pattern": "^ms-[a-z0-9][a-z0-9-]*$" },
+              { "type": "null" }
+            ],
+            "description": "null for main quest; REQUIRED milestone id for side quests (the branch point)."
+          },
+          "side": {
+            "oneOf": [
+              { "type": "string", "enum": ["left", "right"] },
+              { "type": "null" }
+            ],
+            "description": "null for main; left|right for side quests."
+          },
+          "order": { "type": "integer" },
+          "status": { "$ref": "#/$defs/status" },
+          "createdAt": { "$ref": "#/$defs/timestamp" },
+          "updatedAt": { "$ref": "#/$defs/timestamp" },
+          "plain": { "type": "string", "description": "OPTIONAL plain-register restatement of the quest's meaning. Absent = old behavior. Titles never swap; this feeds the Plain English toggle only where descriptive text is shown." }
+        }
+      }
+    },
+    "milestones": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["id", "questId", "order", "title", "summary", "status", "statusReason", "eta", "startedAt", "completedAt", "createdAt", "updatedAt"],
+        "properties": {
+          "id": { "$ref": "#/$defs/id", "pattern": "^ms-[a-z0-9][a-z0-9-]*$" },
+          "questId": { "$ref": "#/$defs/id", "pattern": "^q-[a-z0-9][a-z0-9-]*$" },
+          "order": { "type": "integer", "minimum": 0 },
+          "title": { "type": "string", "minLength": 1 },
+          "summary": { "type": "string" },
+          "status": { "$ref": "#/$defs/status" },
+          "statusReason": { "type": "string", "description": "REQUIRED non-empty when status is blocked." },
+          "eta": {
+            "oneOf": [
+              { "type": "string", "minLength": 1 },
+              { "type": "null" }
+            ]
+          },
+          "startedAt": { "$ref": "#/$defs/nullableTimestamp" },
+          "completedAt": { "$ref": "#/$defs/nullableTimestamp" },
+          "createdAt": { "$ref": "#/$defs/timestamp" },
+          "updatedAt": { "$ref": "#/$defs/timestamp" },
+          "plain": { "type": "string", "description": "OPTIONAL plain-register restatement of title+summary. Feeds the Plain English toggle (swaps the summary slot)." },
+          "unclear": { "type": "boolean", "description": "OPTIONAL. true = founder flagged this milestone as unclear. Absent or false = not flagged." },
+          "unclearAt": { "$ref": "#/$defs/nullableTimestamp", "description": "OPTIONAL. REQUIRED valid timestamp when unclear===true; null/absent otherwise (enforced by validate.mjs)." },
+          "unclearDispatchId": { "$ref": "#/$defs/dispatchId", "description": "OPTIONAL. Set (with unclearDispatchedAt) when a dispatch consumes this standing unclear flag; both-or-neither." },
+          "unclearDispatchedAt": { "$ref": "#/$defs/timestamp", "description": "OPTIONAL. ISO timestamp the flag was dispatched; both-or-neither with unclearDispatchId." },
+          "evidence": {
+            "type": "array",
+            "items": { "$ref": "#/$defs/evidenceEntry" },
+            "description": "OPTIONAL, additive, append-only. Observations that runs were launched / claimed finished / judged / abandoned against this milestone. Absent = old behavior (a road with no evidence reads exactly as before). claimsComplete is DERIVED from this array at read time and is NEVER stored."
+          }
+        }
+      }
+    },
+    "items": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["id", "milestoneId", "order", "kind", "title", "body", "status", "blockedReason", "notes", "createdAt", "updatedAt"],
+        "properties": {
+          "id": { "$ref": "#/$defs/id", "pattern": "^it-[a-z0-9][a-z0-9-]*$" },
+          "milestoneId": { "$ref": "#/$defs/id", "pattern": "^ms-[a-z0-9][a-z0-9-]*$" },
+          "order": { "type": "integer", "minimum": 0 },
+          "kind": { "type": "string", "enum": ["task", "explanation", "note_to_founder", "blocker"] },
+          "title": { "type": "string", "minLength": 1 },
+          "body": { "type": "string" },
+          "status": { "$ref": "#/$defs/itemStatus" },
+          "blockedReason": { "type": "string", "description": "REQUIRED non-empty when status is blocked." },
+          "notes": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": ["id", "author", "body", "ts"],
+              "properties": {
+                "id": { "$ref": "#/$defs/id", "pattern": "^note-[a-z0-9][a-z0-9-]*$" },
+                "author": { "type": "string", "enum": ["founder", "agent"] },
+                "body": { "type": "string", "minLength": 1 },
+                "ts": { "$ref": "#/$defs/timestamp" },
+                "pending": { "type": "boolean", "description": "OPTIONAL. true = a founder note awaiting a dispatch (set only by POST /api/note). Absent or false = not pending. Cleared to false when a dispatch consumes it." },
+                "dispatchId": { "$ref": "#/$defs/dispatchId", "description": "OPTIONAL. Set (with dispatchedAt) when a dispatch consumes this note; both-or-neither." },
+                "dispatchedAt": { "$ref": "#/$defs/timestamp", "description": "OPTIONAL. ISO timestamp the note was dispatched; both-or-neither with dispatchId." }
+              }
+            }
+          },
+          "createdAt": { "$ref": "#/$defs/timestamp" },
+          "updatedAt": { "$ref": "#/$defs/timestamp" },
+          "plain": { "type": "string", "description": "OPTIONAL plain-register restatement of the item body. Feeds the Plain English toggle (swaps the body slot)." },
+          "unclear": { "type": "boolean", "description": "OPTIONAL. true = founder flagged this item as unclear. Absent or false = not flagged." },
+          "unclearAt": { "$ref": "#/$defs/nullableTimestamp", "description": "OPTIONAL. REQUIRED valid timestamp when unclear===true; null/absent otherwise (enforced by validate.mjs)." },
+          "unclearDispatchId": { "$ref": "#/$defs/dispatchId", "description": "OPTIONAL. Set (with unclearDispatchedAt) when a dispatch consumes this standing unclear flag; both-or-neither." },
+          "unclearDispatchedAt": { "$ref": "#/$defs/timestamp", "description": "OPTIONAL. ISO timestamp the flag was dispatched; both-or-neither with unclearDispatchId." }
+        }
+      }
+    },
+    "assets": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["id", "milestoneId", "kind", "label", "ref", "addedAt"],
+        "properties": {
+          "id": { "$ref": "#/$defs/id", "pattern": "^as-[a-z0-9][a-z0-9-]*$" },
+          "milestoneId": { "$ref": "#/$defs/id", "pattern": "^ms-[a-z0-9][a-z0-9-]*$" },
+          "kind": { "type": "string", "enum": ["file", "url", "doc", "command"] },
+          "label": { "type": "string", "minLength": 1 },
+          "ref": { "type": "string", "minLength": 1 },
+          "addedAt": { "$ref": "#/$defs/timestamp" }
+        }
+      }
+    }
+  }
+}

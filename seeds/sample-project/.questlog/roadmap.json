@@ -1,0 +1,275 @@
+{
+  "schemaVersion": 1,
+  "project": {
+    "name": "Sample Project",
+    "tagline": "A tiny demo roadmap you can copy for any project",
+    "createdAt": "2026-07-10T09:00:00.000Z",
+    "updatedAt": "2026-07-20T21:00:00.000Z"
+  },
+  "quests": [
+    {
+      "id": "q-main",
+      "type": "main",
+      "title": "Ship v1",
+      "parentMilestoneId": null,
+      "side": null,
+      "order": 0,
+      "status": "in_progress",
+      "createdAt": "2026-07-10T09:00:00.000Z",
+      "updatedAt": "2026-07-15T11:00:00.000Z",
+      "plain": "Get the first real version of the product built and out to real users."
+    },
+    {
+      "id": "q-polish",
+      "type": "side",
+      "title": "Polish Pass",
+      "parentMilestoneId": "ms-mvp",
+      "side": "right",
+      "order": 0,
+      "status": "in_progress",
+      "createdAt": "2026-07-14T10:00:00.000Z",
+      "updatedAt": "2026-07-17T13:00:00.000Z",
+      "plain": "A side effort to tidy up the wording and small visual details before launch."
+    }
+  ],
+  "milestones": [
+    {
+      "id": "ms-setup",
+      "questId": "q-main",
+      "order": 0,
+      "title": "Set up the repo",
+      "summary": "Initialize the project, tooling, and a running dev loop.",
+      "status": "done",
+      "statusReason": "",
+      "eta": null,
+      "startedAt": "2026-07-10T09:05:00.000Z",
+      "completedAt": "2026-07-11T15:30:00.000Z",
+      "createdAt": "2026-07-10T09:00:00.000Z",
+      "updatedAt": "2026-07-11T15:30:00.000Z",
+      "plain": "Get the project folder, tools, and a working local run-loop in place."
+    },
+    {
+      "id": "ms-mvp",
+      "questId": "q-main",
+      "order": 1,
+      "title": "Build the MVP",
+      "summary": "The smallest thing worth showing someone.",
+      "status": "in_progress",
+      "statusReason": "",
+      "eta": "2026-07-25",
+      "startedAt": "2026-07-12T09:00:00.000Z",
+      "completedAt": null,
+      "createdAt": "2026-07-10T09:00:00.000Z",
+      "updatedAt": "2026-07-16T10:00:00.000Z",
+      "plain": "Build the smallest version worth showing someone."
+    },
+    {
+      "id": "ms-launch",
+      "questId": "q-main",
+      "order": 2,
+      "title": "Launch v1",
+      "summary": "Put it in front of real users.",
+      "status": "available",
+      "statusReason": "",
+      "eta": null,
+      "startedAt": null,
+      "completedAt": null,
+      "createdAt": "2026-07-10T09:00:00.000Z",
+      "updatedAt": "2026-07-10T09:00:00.000Z",
+      "plain": "Put the first version in front of real users."
+    },
+    {
+      "id": "ms-feedback",
+      "questId": "q-main",
+      "order": 3,
+      "title": "Gather feedback",
+      "summary": "Watch, listen, and write down what to do next.",
+      "status": "locked",
+      "statusReason": "",
+      "eta": null,
+      "startedAt": null,
+      "completedAt": null,
+      "createdAt": "2026-07-10T09:00:00.000Z",
+      "updatedAt": "2026-07-10T09:00:00.000Z",
+      "plain": "Watch how people use it and write down what to do next."
+    },
+    {
+      "id": "ms-scale",
+      "questId": "q-main",
+      "order": 4,
+      "title": "Handle the first real load",
+      "summary": "Make it stay up when more than a handful of people arrive at once.",
+      "status": "locked",
+      "statusReason": "",
+      "eta": null,
+      "startedAt": null,
+      "completedAt": null,
+      "createdAt": "2026-07-18T10:00:00.000Z",
+      "updatedAt": "2026-07-18T10:00:00.000Z",
+      "plain": "Make sure the site stays up once more than a handful of people show up at the same time."
+    },
+    {
+      "id": "ms-polish-copy",
+      "questId": "q-polish",
+      "order": 0,
+      "title": "Rewrite the copy",
+      "summary": "Make the landing text sound like a person wrote it.",
+      "status": "done",
+      "statusReason": "",
+      "eta": null,
+      "startedAt": "2026-07-14T10:05:00.000Z",
+      "completedAt": "2026-07-15T12:00:00.000Z",
+      "createdAt": "2026-07-14T10:00:00.000Z",
+      "updatedAt": "2026-07-15T12:00:00.000Z",
+      "plain": "Make the landing-page text sound like a real person wrote it."
+    },
+    {
+      "id": "ms-polish-icons",
+      "questId": "q-polish",
+      "order": 1,
+      "title": "Add badge icons",
+      "summary": "Small chunky icons for each feature card.",
+      "status": "in_progress",
+      "statusReason": "",
+      "eta": null,
+      "startedAt": "2026-07-16T09:00:00.000Z",
+      "completedAt": null,
+      "createdAt": "2026-07-14T10:00:00.000Z",
+      "updatedAt": "2026-07-17T13:00:00.000Z",
+      "plain": "Add small, chunky icons to each feature card."
+    }
+  ],
+  "items": [
+    {
+      "id": "it-scaffold",
+      "milestoneId": "ms-setup",
+      "order": 0,
+      "kind": "task",
+      "title": "Scaffold the project",
+      "body": "Create the folder layout, add a `dev` script, and confirm it boots.",
+      "status": "done",
+      "blockedReason": "",
+      "notes": [],
+      "createdAt": "2026-07-10T09:10:00.000Z",
+      "updatedAt": "2026-07-11T15:30:00.000Z",
+      "plain": "Create the folder layout, add a run script, and confirm the project starts."
+    },
+    {
+      "id": "it-readme",
+      "milestoneId": "ms-setup",
+      "order": 1,
+      "kind": "explanation",
+      "title": "How to run the dev loop",
+      "body": "1. `npm install`\n2. `npm run dev`\n3. Open http://localhost:3000\n\nIf the port is busy, set `PORT=3001`.",
+      "status": "open",
+      "blockedReason": "",
+      "notes": [],
+      "createdAt": "2026-07-11T15:00:00.000Z",
+      "updatedAt": "2026-07-11T15:00:00.000Z",
+      "plain": "The steps to run the project locally: install, start the dev server, and open it in your browser; change the port if it is busy."
+    },
+    {
+      "id": "it-mvp-form",
+      "milestoneId": "ms-mvp",
+      "order": 0,
+      "kind": "task",
+      "title": "Wire up the signup form",
+      "body": "Capture email, validate it, store it. No auth yet — that is deferred (see decisions).",
+      "status": "open",
+      "blockedReason": "",
+      "notes": [],
+      "createdAt": "2026-07-12T09:05:00.000Z",
+      "updatedAt": "2026-07-12T09:05:00.000Z",
+      "plain": "Build the signup form that takes an email, checks it, and saves it. Accounts and login are left for later."
+    },
+    {
+      "id": "it-mvp-note",
+      "milestoneId": "ms-mvp",
+      "order": 1,
+      "kind": "note_to_founder",
+      "title": "Which fields do you want on signup?",
+      "body": "Right now the form only asks for email. Want a name field too, or keep it to one input for a lower barrier?",
+      "status": "open",
+      "blockedReason": "",
+      "notes": [
+        {
+          "id": "note-founder-1",
+          "author": "founder",
+          "body": "Keep it to just email for launch. We can add name later if we need it.",
+          "ts": "2026-07-16T09:40:00.000Z"
+        },
+        {
+          "id": "note-agent-1",
+          "author": "agent",
+          "body": "Got it — single email input it is. Marked this decision so we remember why.",
+          "ts": "2026-07-16T09:45:00.000Z"
+        }
+      ],
+      "createdAt": "2026-07-15T11:00:00.000Z",
+      "updatedAt": "2026-07-16T09:45:00.000Z",
+      "plain": "Right now signup only asks for an email. Do you want a name field too, or keep it to one box so it is easier to fill in?"
+    },
+    {
+      "id": "it-launch-domain",
+      "milestoneId": "ms-launch",
+      "order": 0,
+      "kind": "blocker",
+      "title": "Buy the production domain",
+      "body": "Needs a human with the payment card to purchase the domain and point DNS. Parked until you have a minute.",
+      "status": "blocked",
+      "blockedReason": "Waiting on founder to purchase domain and confirm the registrar.",
+      "notes": [],
+      "createdAt": "2026-07-15T11:10:00.000Z",
+      "updatedAt": "2026-07-15T11:10:00.000Z",
+      "plain": "Someone with a payment card needs to buy the web address and point it at the site. Parked until you have a minute."
+    },
+    {
+      "id": "it-polish-copy-explain",
+      "milestoneId": "ms-polish-copy",
+      "order": 0,
+      "kind": "explanation",
+      "title": "The new tagline and why",
+      "body": "Headline is now **\"Track what you decided, not just what you did.\"** — it leads with the memory angle, which is the differentiator. Old one led with \"roadmap\", which every tool claims.",
+      "status": "done",
+      "blockedReason": "",
+      "notes": [],
+      "createdAt": "2026-07-15T11:30:00.000Z",
+      "updatedAt": "2026-07-15T12:00:00.000Z",
+      "plain": "The new headline leads with the memory angle, which is what sets the product apart, instead of the word every other tool uses."
+    }
+  ],
+  "assets": [
+    {
+      "id": "as-repo",
+      "milestoneId": "ms-setup",
+      "kind": "url",
+      "label": "Project repository",
+      "ref": "https://example.com/your-org/sample-project",
+      "addedAt": "2026-07-10T09:15:00.000Z"
+    },
+    {
+      "id": "as-readme",
+      "milestoneId": "ms-setup",
+      "kind": "file",
+      "label": "README",
+      "ref": "./README.md",
+      "addedAt": "2026-07-11T15:00:00.000Z"
+    },
+    {
+      "id": "as-deploy-cmd",
+      "milestoneId": "ms-launch",
+      "kind": "command",
+      "label": "Deploy command",
+      "ref": "npm run deploy -- --env production",
+      "addedAt": "2026-07-15T11:05:00.000Z"
+    },
+    {
+      "id": "as-icon-sheet",
+      "milestoneId": "ms-polish-icons",
+      "kind": "doc",
+      "label": "Icon style notes",
+      "ref": "docs/icon-style.md",
+      "addedAt": "2026-07-16T09:10:00.000Z"
+    }
+  ]
+}

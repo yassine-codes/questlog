@@ -1,0 +1,58 @@
+{
+  "schemaVersion": 1,
+  "suggestions": [
+    {
+      "id": "sg-0a1b2c3d",
+      "frontierMilestoneId": "ms-mvp",
+      "questId": "q-main",
+      "title": "Hand it to ten friendly testers",
+      "summary": "Pick people who will actually use it and watch them try.",
+      "plain": "Give the first version to about ten people you trust and watch them use it.",
+      "order": 0,
+      "branchIndex": 0,
+      "seqIndex": 0,
+      "createdAt": "2026-07-18T10:05:00.000Z",
+      "updatedAt": "2026-07-18T10:05:00.000Z"
+    },
+    {
+      "id": "sg-0a1b2c3e",
+      "frontierMilestoneId": "ms-mvp",
+      "questId": "q-main",
+      "title": "Write down what tripped them up",
+      "summary": "One list, in their words, of every place they hesitated.",
+      "plain": "Keep one list, in their own words, of every place those testers got stuck.",
+      "order": 1,
+      "branchIndex": 0,
+      "seqIndex": 1,
+      "createdAt": "2026-07-18T10:05:00.000Z",
+      "updatedAt": "2026-07-18T10:05:00.000Z"
+    },
+    {
+      "id": "sg-0a1b2c3f",
+      "frontierMilestoneId": "ms-mvp",
+      "questId": "q-main",
+      "title": "Put it behind a real web address",
+      "summary": "Move off the local machine before anyone is invited.",
+      "plain": "Move it off your own computer and onto a real web address before you invite anyone.",
+      "order": 2,
+      "branchIndex": 1,
+      "seqIndex": 0,
+      "createdAt": "2026-07-18T10:05:00.000Z",
+      "updatedAt": "2026-07-18T10:05:00.000Z"
+    },
+    {
+      "id": "sg-0a1b2c40",
+      "frontierMilestoneId": "ms-mvp",
+      "questId": "q-main",
+      "title": "Get told when it falls over",
+      "summary": "A single alert, to one inbox, when the site stops answering.",
+      "plain": "Set up one alert so you hear about it yourself when the site stops answering.",
+      "order": 3,
+      "branchIndex": 1,
+      "seqIndex": 1,
+      "createdAt": "2026-07-18T10:05:00.000Z",
+      "updatedAt": "2026-07-18T10:05:00.000Z"
+    }
+  ],
+  "requests": []
+}
